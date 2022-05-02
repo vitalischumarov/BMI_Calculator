@@ -30,9 +30,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBAction func calculateButtonPressed(_ sender: UIButton) {
         let resultCheckingInput = checkInput()
         if resultCheckingInput == true {
-            var resultIBM = calculateBMI(isHeight: height, isWeight: weight)
-            
-            
+            let resultBMI = calculateBMI(isHeight: height, isWeight: weight)
+            let resultBMIAsString = String(format: "%.0f", resultBMI)
+            let message = checkBMIResult(myBMI: resultBMI)
+            showResult(bmi: resultBMIAsString, message: message)
+            resetInput()
             
         } else {
             print(resultCheckingInput)
@@ -41,14 +43,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     //with this function I am calculating the BMI value
-    func calculateBMI(isHeight: String, isWeight: String) -> String {
+    func calculateBMI(isHeight: String, isWeight: String) -> Float {
         let heightAsFloat = Float(isHeight)!
         let weightAsFloat = Float(isWeight)!
-        let bmi = String(format: "%.0f", (weightAsFloat / (heightAsFloat * heightAsFloat)))
-        print("the bmi is \(bmi)")
+//        let bmi = String(format: "%.0f", (weightAsFloat / (heightAsFloat * heightAsFloat)))
+        let bmi = (weightAsFloat / (heightAsFloat * heightAsFloat))
         return bmi
-        
-
     }
     
 
@@ -64,6 +64,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    //what shall happen, when an input is missing
     func alertMissingInput() {
         let alert = UIAlertController(title: "Missing input", message: "check the TextFields", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -80,6 +81,29 @@ class ViewController: UIViewController, UITextFieldDelegate {
     //with this function I close the keyboard, when the user taps somewhere on the screen
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
+    }
+    
+    func checkBMIResult(myBMI: Float) -> String{
+        switch myBMI {
+        case 0...18.5 :     do { return "underweight"}
+        case 18.5...24.9 :  do { return "healthy"}
+        case 25.0...29.9 :  do { return "overweight"}
+        case 30...200 :     do { return "overweight"}
+        default:            do { return "error"}
+        }
+    }
+    
+    func showResult(bmi: String, message: String) {
+        let alert = UIAlertController(title: "Your BMI is: \(bmi)", message: "you are: \(message)", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func resetInput() {
+        heigtTextField.text = ""
+        nameTextField.text = ""
+        weightTextField.text = ""
     }
     
 }
